@@ -4,7 +4,7 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CXX
 
-SPECFLAGS="-O3 -std=c++11 -Wall"
+CXXFLAGS="-O0 -g -std=c++11 -Wall"
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
