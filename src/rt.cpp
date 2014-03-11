@@ -1,7 +1,6 @@
 #include <tuple>
 #include <vector>
 #include <string>
-#include <iostream>
 
 #include "frameworkstuff.h"
 #include "bitmap.h"
@@ -75,11 +74,9 @@ int main()
   size_t nodesNumber = system->size();
   size_t id = system->id();
 
-  std::cout << id << ": Hello! " << std::endl; // << ", " << Size::RESOLUTION_X << ", " << i + 1 << std::endl;
   size_t begin, end;
   tie(begin, end) = getInterval(nodesNumber, id, Size::RESOLUTION_Y);
 
-  std::cout << id << ": (" << begin << ", " << end << ")" << std::endl; // << ", " << Size::RESOLUTION_X << ", " << i + 1 << std::endl;
   vector<Cell*> cells;
   for(size_t i = begin; i < end; ++i) {
     Camera* camera = new Camera(4, 4, 15, 5);
@@ -95,26 +92,27 @@ int main()
 
   system->run();
 
+  int realj = begin;
+  bitmap_image bmp(Size::RESOLUTION_X, Size::RESOLUTION_Y);
   for(Cell* cell : cells) {
     RGB* table = cell->getResult();
-    bitmap_image bmp(Size::RESOLUTION_X, Size::RESOLUTION_Y);
 
     for(int i = 0; i < RESOLUTION_X; ++i) {
       for (int j = 0; j < 1; ++j) {
-        RGB& color = table[i * RESOLUTION_X + j];
-        bmp.set_pixel(i, j, color.red * 255, color.green * 255, color.blue * 255);
+        RGB& color = table[j * RESOLUTION_X + i];
+        bmp.set_pixel(i, realj, color.red * 255, color.green * 255, color.blue * 255);
       }
     }
+    ++realj;
     delete[] table;
 
-    ID id = cell->id();
-    string first  = std::to_string(id.c[0]);
-    string second = std::to_string(id.c[1]);
-    string ending = ".bmp";
-
-    string filename = first + second + ending;
-    bmp.save_image(filename);
   }
+
+  string first  = std::to_string(id);
+  string ending = ".bmp";
+
+  string filename = first + ending;
+  bmp.save_image(filename);
 
   delete system;
   for(Cell* cell: cells)

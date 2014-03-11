@@ -63,8 +63,9 @@ RGB* Camera::run() {
       if(color.green > 1)
         color.green = 1;
 
-      assert(iy * (part[1] - part[0]) + ix < (part[1] - part[0]) * (part[3] - part[2]));
-      table[iy * (part[1] - part[0]) + ix] = color;
+
+      assert((iy - part[2]) * (part[1] - part[0]) + (ix - part[0]) < (part[1] - part[0]) * (part[3] - part[2]));
+      table[(iy - part[2]) * (part[1] - part[0]) + (ix - part[0])] = color;
     }
   return table;
 }
