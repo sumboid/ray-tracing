@@ -1,3 +1,5 @@
+#include <iostream>
+#include <cassert>
 #include "camera.h"
 
 namespace trace {
@@ -43,12 +45,12 @@ void Camera::setScene(Scene* _scene) {
 
 RGB* Camera::run() {
   RGB* table = new RGB[(part[1] - part[0]) * (part[3] - part[2])];
-  for(int ix = part[0]; ix < part[1]; ix++)
-    for(int iz = part[2]; iz < part[3]; iz++)
+  for(int iy = part[2]; iy < part[3]; iy++)
+    for(int ix = part[0]; ix < part[1]; ix++)
     {
       Vector ray (ix*imagePlaneSizeX/imagePlaneResolutionX-imagePlaneSizeX/2,
                   imagePlaneDistance,
-                  iz*imagePlaneSizeZ/imagePlaneResolutionZ-imagePlaneSizeZ/2);
+                  iy*imagePlaneSizeZ/imagePlaneResolutionZ-imagePlaneSizeZ/2);
 
       ray = ray.norm();
 
@@ -61,7 +63,8 @@ RGB* Camera::run() {
       if(color.green > 1)
         color.green = 1;
 
-      table[ix * (part[1] - part[0]) + iz] = color;
+      assert(iy * (part[1] - part[0]) + ix < (part[1] - part[0]) * (part[3] - part[2]));
+      table[iy * (part[1] - part[0]) + ix] = color;
     }
   return table;
 }

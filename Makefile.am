@@ -13,4 +13,5 @@ rt_SOURCES =  src/tracing/lowlevel.cpp \
               src/tracing/objects/sphere.h \
               src/tracing/objects/sphere.cpp \
               src/rt.cpp \
-              src/bitmap.h
+              src/bitmap.h \
+              src/frameworkstuff.h
