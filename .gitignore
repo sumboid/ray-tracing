@@ -16,10 +16,12 @@
 *.exe
 *.out
 *.app
-ts
+rt
 
 # Dirs
 sandbox
+build
+*.bmp
 
 # Files
 .tags*
@@ -38,3 +40,6 @@ config.log
 Makefile
 .deps/
 .dirstamp
+
+# Qtcreator
+*.user
