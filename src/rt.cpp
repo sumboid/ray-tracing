@@ -32,6 +32,7 @@ enum Size {
 
 Scene* createScene() {
   Scene* scene = new Scene(100);
+
   scene->addObject(new Sphere(Point(0, 7, 2), 1, RGB(1, 0.3, 0.3)));
   scene->addObject(new Sphere(Point(-3, 11, -2), 2, RGB(0.3, 0.3, 1)));
   scene->addObject(new Sphere(Point(0, 8, -2), 1, RGB(0.3, 1, 0.3)));
@@ -92,8 +93,8 @@ int main()
 
   system->run();
 
-  int realj = begin;
-  bitmap_image bmp(Size::RESOLUTION_X, Size::RESOLUTION_Y);
+  int realj = 0;
+  bitmap_image bmp(Size::RESOLUTION_X, end - begin);
   for(Cell* cell : cells) {
     RGB* table = cell->getResult();
 

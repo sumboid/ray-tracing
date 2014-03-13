@@ -1,4 +1,5 @@
 #pragma once
+
 #include <ts/system/System.h>
 #include <ts/types/AbstractCell.h>
 
@@ -59,13 +60,11 @@ public:
     return new ReduceData();
   }
 
-
   void reduceStep(ts::type::ReduceData* data) {
   }
 
   void update(ts::type::AbstractCell* cell) {
   }
-
 };
 
 class CellTools: public ts::type::AbstractCellTools {
