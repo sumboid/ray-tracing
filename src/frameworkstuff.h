@@ -1,5 +1,6 @@
 #pragma once
 
+<<<<<<< HEAD
 #include <ts/types/Fragment.h>
 #include <ts/types/FragmentTools.h>
 #include <ts/types/ID.h>
@@ -9,6 +10,10 @@
 #include <ts/util/Arc.h>
 #include "bitmap.h"
 #include <string>
+=======
+#include <ts/system/System.h>
+#include <ts/types/AbstractCell.h>
+>>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 
 #include "tracing/scene.h"
 #include "tracing/camera.h"
@@ -90,17 +95,25 @@ public:
     return new ReduceData();
   }
 
+<<<<<<< HEAD
 
   void reduceStep(ts::type::ReduceData*) override {}
+=======
+  void reduceStep(ts::type::ReduceData* data) {
+  }
+>>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 
   Fragment* getBoundary() override {
     Fragment* fragment = new Fragment(id(), 0);
     return fragment;
   }
+<<<<<<< HEAD
 
   Fragment* copy() override {
     return new Fragment(id(), 0);
   }
+=======
+>>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 };
 
 class FragmentTools: public ts::type::FragmentTools {

@@ -34,6 +34,7 @@ enum Size {
 
 Scene* createScene() {
   Scene* scene = new Scene(100);
+
   scene->addObject(new Sphere(Point(0, 7, 2), 1, RGB(1, 0.3, 0.3)));
   scene->addObject(new Sphere(Point(-3, 11, -2), 2, RGB(0.3, 0.3, 1)));
   scene->addObject(new Sphere(Point(0, 8, -2), 1, RGB(0.3, 1, 0.3)));
@@ -97,6 +98,30 @@ int main()
     system->addFragment(f);
   system->run();
 
+<<<<<<< HEAD
+=======
+  int realj = 0;
+  bitmap_image bmp(Size::RESOLUTION_X, end - begin);
+  for(Cell* cell : cells) {
+    RGB* table = cell->getResult();
+
+    for(int i = 0; i < RESOLUTION_X; ++i) {
+      for (int j = 0; j < 1; ++j) {
+        RGB& color = table[j * RESOLUTION_X + i];
+        bmp.set_pixel(i, realj, color.red * 255, color.green * 255, color.blue * 255);
+      }
+    }
+    ++realj;
+    delete[] table;
+
+  }
+
+  string first  = std::to_string(id);
+  string ending = ".bmp";
+
+  string filename = first + ending;
+  bmp.save_image(filename);
+>>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 
   delete system;
   return 0;
