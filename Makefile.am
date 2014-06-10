@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
-bin_PROGRAMS = rt
+bin_PROGRAMS = rt rtmerge
 rt_SOURCES =  src/tracing/lowlevel.cpp \
               src/tracing/lowlevel.h \
               src/tracing/camera.h \
@@ -15,3 +15,6 @@ rt_SOURCES =  src/tracing/lowlevel.cpp \
               src/rt.cpp \
               src/bitmap.h \
               src/frameworkstuff.h
+
+rtmerge_SOURCES = src/merge.cpp \
+                     src/bitmap.h

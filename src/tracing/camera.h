@@ -4,7 +4,7 @@
 
 namespace trace {
 class Camera {
-private:
+public:
   double backgroundSizeX;
   double backgroundSizeZ;
   double backgroundDistance;

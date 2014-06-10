@@ -10,6 +10,8 @@
 #include "tracing/objects/sphere.h"
 #include "tracing/lowlevel.h"
 
+#include <ts/system/System.h>
+
 using std::tuple;
 using std::tie;
 using std::vector;
@@ -26,8 +28,8 @@ using ts::system::System;
 using ts::type::ID;
 
 enum Size {
-  RESOLUTION_X = 1000,
-  RESOLUTION_Y = 1000
+  RESOLUTION_X = 100,
+  RESOLUTION_Y = 100
 };
 
 Scene* createScene() {
@@ -47,8 +49,8 @@ Scene* createScene() {
   return scene;
 }
 
-System* createSystem() {
-  CellTools* ct = new CellTools;
+System* createSystem(Scene* scene, Camera* camera) {
+  FragmentTools* ct = new FragmentTools(scene, camera);
   ReduceDataTools* rt = new ReduceDataTools;
   return new System(ct, rt);
 }
@@ -66,10 +68,18 @@ tuple<size_t, size_t> getInterval(size_t size, size_t id, size_t partsNumber) {
   }
 }
 
+Camera* createCamera(Scene* scene) {
+  Camera* camera = new Camera(4, 4, 15, 5);
+  camera->setViewPoint(Point(0, -20, 0));
+  camera->setScene(scene);
+  camera->setResolution(Size::RESOLUTION_X, Size::RESOLUTION_Y);
+  return camera;
+}
+
 int main()
 {
   Scene* scene = createScene();
-  System* system = createSystem();
+  System* system = createSystem(scene, createCamera(scene));
 
   size_t nodesNumber = system->size();
   size_t id = system->id();
@@ -77,45 +87,17 @@ int main()
   size_t begin, end;
   tie(begin, end) = getInterval(nodesNumber, id, Size::RESOLUTION_Y);
 
-  vector<Cell*> cells;
+  vector<Fragment*> fs;
   for(size_t i = begin; i < end; ++i) {
-    Camera* camera = new Camera(4, 4, 15, 5);
-    camera->setViewPoint(Point(0, -20, 0));
-    camera->setScene(scene);
-    camera->setResolution(Size::RESOLUTION_X, Size::RESOLUTION_Y);
+    Camera* camera = createCamera(scene);
     camera->setPart(0, i, Size::RESOLUTION_X, i + 1);
-
-    cells.push_back(new Cell(ID(id, i - begin, 0), camera));
+    fs.push_back(new Fragment(ID(id, i - begin, 0), camera));
   }
-  for(auto cell : cells)
-    system->addCell(cell);
-
+  for(auto f : fs)
+    system->addFragment(f);
   system->run();
 
-  int realj = begin;
-  bitmap_image bmp(Size::RESOLUTION_X, Size::RESOLUTION_Y);
-  for(Cell* cell : cells) {
-    RGB* table = cell->getResult();
-
-    for(int i = 0; i < RESOLUTION_X; ++i) {
-      for (int j = 0; j < 1; ++j) {
-        RGB& color = table[j * RESOLUTION_X + i];
-        bmp.set_pixel(i, realj, color.red * 255, color.green * 255, color.blue * 255);
-      }
-    }
-    ++realj;
-    delete[] table;
-
-  }
-
-  string first  = std::to_string(id);
-  string ending = ".bmp";
-
-  string filename = first + ending;
-  bmp.save_image(filename);
 
   delete system;
-  for(Cell* cell: cells)
-    delete cell;
   return 0;
 }
