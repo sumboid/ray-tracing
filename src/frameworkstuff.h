@@ -1,6 +1,5 @@
 #pragma once
 
-<<<<<<< HEAD
 #include <ts/types/Fragment.h>
 #include <ts/types/FragmentTools.h>
 #include <ts/types/ID.h>
@@ -10,11 +9,6 @@
 #include <ts/util/Arc.h>
 #include "bitmap.h"
 #include <string>
-=======
-#include <ts/system/System.h>
-#include <ts/types/AbstractCell.h>
->>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
-
 #include "tracing/scene.h"
 #include "tracing/camera.h"
 #include "tracing/light.h"
@@ -61,6 +55,8 @@ public:
   }
 
   ~Fragment() {
+    if(result != 0) delete[] result;
+    delete camera;
   }
 
   void runStep(std::vector<ts::type::Fragment*>) override {
@@ -68,18 +64,21 @@ public:
     int dx = (camera->part[1] - camera->part[0]);
     int dy =  (camera->part[3] - camera->part[2]);
 
-    ULOG(fragment) << "OK: " << dx << "x" << dy << UEND;
     bitmap_image bmp(dx, dy);
     for(int x = 0; x < dx; ++x) {
       for(int y = 0; y < dy; ++y) {
-        trace::RGB& color = result[x * dy + y];
+        trace::RGB& color = result[y * dx + x];
         bmp.set_pixel(x, y, color.red * 255, color.green * 255, color.blue * 255);
       }
     }
 
-    bmp.save_image(std::to_string(id().c[0]) + "." + std::to_string(id().c[1]) + "." + std::to_string(id().c[2]) + ".bmp");
-    delete[] result;
-    delete camera;
+    std::string filename = std::to_string(id().c[0]) + ".";
+    if(id().c[1] < 10) filename += "00" + std::to_string(id().c[1]) + ".bmp";
+    else if(id().c[1] < 100) filename += "0" + std::to_string(id().c[1]) + ".bmp";
+    else filename += std::to_string(id().c[1]) + ".bmp";
+
+    bmp.save_image(filename);
+
     setEnd();
   }
 
@@ -95,25 +94,20 @@ public:
     return new ReduceData();
   }
 
-<<<<<<< HEAD
-
   void reduceStep(ts::type::ReduceData*) override {}
-=======
-  void reduceStep(ts::type::ReduceData* data) {
-  }
->>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 
   Fragment* getBoundary() override {
     Fragment* fragment = new Fragment(id(), 0);
     return fragment;
   }
-<<<<<<< HEAD
 
   Fragment* copy() override {
     return new Fragment(id(), 0);
   }
-=======
->>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
+
+  uint64_t weight() {
+    return (camera->part[1] - camera->part[0]) * (camera->part[3] - camera->part[2]);
+  }
 };
 
 class FragmentTools: public ts::type::FragmentTools {
@@ -144,14 +138,13 @@ public:
 
   ts::type::Fragment* fdeserialize(ts::Arc* arc) {
     ts::Arc& a = *arc;
-    camera->setScene(scene);
     int part[4];
     a >> part[0];
     a >> part[1];
     a >> part[2];
     a >> part[3];
     camera->setPart(part[0], part[2], part[1], part[3]);
-    Fragment* result = new Fragment(ts::type::ID(0, 0, 0), camera);
+    Fragment* result = new Fragment(ts::type::ID(0, 0, 0), camera->copy());
     return result;
   }
 

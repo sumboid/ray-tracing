@@ -1,6 +1,7 @@
 #include <tuple>
 #include <vector>
 #include <string>
+#include <set>
 
 #include "frameworkstuff.h"
 #include "bitmap.h"
@@ -12,10 +13,13 @@
 
 #include <ts/system/System.h>
 
+#define FRAGMENTS_NUMBER 25
+
 using std::tuple;
 using std::tie;
 using std::vector;
 using std::string;
+using std::set;
 
 using trace::Camera;
 using trace::Scene;
@@ -28,8 +32,8 @@ using ts::system::System;
 using ts::type::ID;
 
 enum Size {
-  RESOLUTION_X = 100,
-  RESOLUTION_Y = 100
+  RESOLUTION_X = 5000,
+  RESOLUTION_Y = 5000
 };
 
 Scene* createScene() {
@@ -69,59 +73,55 @@ tuple<size_t, size_t> getInterval(size_t size, size_t id, size_t partsNumber) {
   }
 }
 
+set<tuple<size_t, size_t>> getInterval(size_t size, size_t id, size_t linesNumber, size_t fragmentsNumber) {
+  set<tuple<size_t, size_t>> result;
+  size_t begin, end;
+  tie(begin, end) = getInterval(size, id, linesNumber);
+
+  for(size_t i = 0; i < fragmentsNumber; ++i) {
+    size_t lb, le;
+    tie(lb, le) = getInterval(fragmentsNumber, i, end - begin);
+    result.emplace(lb + begin, le + begin);
+  }
+
+  return result;
+}
+
 Camera* createCamera(Scene* scene) {
   Camera* camera = new Camera(4, 4, 15, 5);
-  camera->setViewPoint(Point(0, -20, 0));
+  camera->setViewPoint(Point(0, -60, 0));
   camera->setScene(scene);
   camera->setResolution(Size::RESOLUTION_X, Size::RESOLUTION_Y);
   return camera;
+}
+
+std::map<int, double> balancer(uint64_t, std::map<int, uint64_t>) {
+  return std::map<int, double>();
 }
 
 int main()
 {
   Scene* scene = createScene();
   System* system = createSystem(scene, createCamera(scene));
+  system->setBalancer(balancer);
 
   size_t nodesNumber = system->size();
   size_t id = system->id();
 
-  size_t begin, end;
-  tie(begin, end) = getInterval(nodesNumber, id, Size::RESOLUTION_Y);
+  auto split = getInterval(nodesNumber, id, Size::RESOLUTION_Y, FRAGMENTS_NUMBER);
 
   vector<Fragment*> fs;
-  for(size_t i = begin; i < end; ++i) {
+  size_t count = 0;
+  for(auto& i: split) {
     Camera* camera = createCamera(scene);
-    camera->setPart(0, i, Size::RESOLUTION_X, i + 1);
-    fs.push_back(new Fragment(ID(id, i - begin, 0), camera));
+    size_t b, e;
+    tie(b, e) = i;
+    camera->setPart(0, b, Size::RESOLUTION_X, e);
+    fs.push_back(new Fragment(ID(id, count++, 0), camera));
   }
   for(auto f : fs)
     system->addFragment(f);
   system->run();
-
-<<<<<<< HEAD
-=======
-  int realj = 0;
-  bitmap_image bmp(Size::RESOLUTION_X, end - begin);
-  for(Cell* cell : cells) {
-    RGB* table = cell->getResult();
-
-    for(int i = 0; i < RESOLUTION_X; ++i) {
-      for (int j = 0; j < 1; ++j) {
-        RGB& color = table[j * RESOLUTION_X + i];
-        bmp.set_pixel(i, realj, color.red * 255, color.green * 255, color.blue * 255);
-      }
-    }
-    ++realj;
-    delete[] table;
-
-  }
-
-  string first  = std::to_string(id);
-  string ending = ".bmp";
-
-  string filename = first + ending;
-  bmp.save_image(filename);
->>>>>>> 4d087494270f7147ed1ac447d20479b92c169af2
 
   delete system;
   return 0;

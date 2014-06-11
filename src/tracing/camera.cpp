@@ -63,10 +63,22 @@ RGB* Camera::run() {
       if(color.green > 1)
         color.green = 1;
 
-
-      assert((iy - part[2]) * (part[1] - part[0]) + (ix - part[0]) < (part[1] - part[0]) * (part[3] - part[2]));
       table[(iy - part[2]) * (part[1] - part[0]) + (ix - part[0])] = color;
     }
   return table;
 }
+
+Camera* Camera::copy() {
+  Camera* c = new Camera(backgroundSizeX, backgroundSizeZ, backgroundDistance, imagePlaneDistance);
+  c->vp = vp;
+  c->imagePlaneResolutionX = imagePlaneResolutionX;
+  c->imagePlaneResolutionZ = imagePlaneResolutionZ;
+  c->part[0] = part[0];
+  c->part[1] = part[1];
+  c->part[2] = part[2];
+  c->part[3] = part[3];
+  c->scene = scene;
+  return c;
+}
+
 }

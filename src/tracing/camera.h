@@ -28,6 +28,8 @@ public:
   void setViewPoint(const Point& p);
   void setScene(Scene* _scene);
 
+  Camera* copy();
+
   RGB* run();
 };
 

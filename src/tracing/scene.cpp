@@ -1,6 +1,8 @@
 #include <algorithm>
 #include "scene.h"
 
+#include <unistd.h>
+
 namespace trace {
 
 Scene::Scene(int _iterations) { iterations = _iterations; }
@@ -33,6 +35,8 @@ RGB Scene::illumination(const Point& start, const Vector& ray, int iteration) {
   if(object == 0) { // Not cool, but who cares
     return RGB(0, 0, 0);
   }
+
+  usleep(100);
 
   Point point = object->interspect(start, ray);
 
