@@ -36,7 +36,7 @@ RGB Scene::illumination(const Point& start, const Vector& ray, int iteration) {
     return RGB(0, 0, 0);
   }
 
-  usleep(100);
+  //usleep(100);
 
   Point point = object->interspect(start, ray);
 

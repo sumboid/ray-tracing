@@ -72,4 +72,8 @@ RGB RGB::mix(RGB another) {
 RGB RGB::add(RGB another) {
   return RGB(another.red + red, another.green + green, another.blue + blue);
 }
+
+RGB RGB::realmix(RGB another) {
+  return RGB((another.red + red) / 2, (another.green + green) / 2, (another.blue + blue) / 2);
+}
 }

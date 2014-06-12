@@ -110,6 +110,17 @@ int main()
 
   auto split = getInterval(nodesNumber, id, Size::RESOLUTION_Y, FRAGMENTS_NUMBER);
 
+  if(id == 0) {
+    Fragment* endFragment = new Fragment(ID(-1, -1, -1), 0);
+    for(size_t i = 0; i < nodesNumber; ++i) {
+      auto split = getInterval(nodesNumber, i, Size::RESOLUTION_Y, FRAGMENTS_NUMBER);
+      for(size_t j = 0; j < split.size(); ++j) {
+        endFragment->addNeighbour(ID(i, j, 0), i);
+      }
+    }
+    system->addFragment(endFragment);
+  }
+
   vector<Fragment*> fs;
   size_t count = 0;
   for(auto& i: split) {
@@ -119,8 +130,10 @@ int main()
     camera->setPart(0, b, Size::RESOLUTION_X, e);
     fs.push_back(new Fragment(ID(id, count++, 0), camera));
   }
-  for(auto f : fs)
+  for(auto f : fs) {
+    f->addNeighbour(ID(-1, -1, -1), 0);
     system->addFragment(f);
+  }
   system->run();
 
   delete system;

@@ -40,6 +40,7 @@ struct RGB {
 
   RGB coef(double c);
   RGB mix(RGB another);
+  RGB realmix(RGB);
   RGB add(RGB another);
 };
 }

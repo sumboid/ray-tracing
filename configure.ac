@@ -4,7 +4,7 @@ AM_SILENT_RULES([yes])
 
 AC_PROG_CXX([mpic++])
 
-CXXFLAGS="-O3 -std=c++11 -I$TS/include -Wall -Wextra -Werror"
+CXXFLAGS="-O0 -g -std=c++11 -I$TS/include -Wall -Wextra -Werror"
 LDFLAGS="-L$TS/lib"
 LIBS="-lts"
 
